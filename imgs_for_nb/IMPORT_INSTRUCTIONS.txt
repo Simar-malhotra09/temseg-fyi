@@ -1,0 +1,17 @@
+Importing into CVAT
+===================
+
+CVAT requires labels to be defined in the task BEFORE importing annotations.
+
+Steps:
+  1. Create a new task in CVAT.
+  2. In the "Labels" step, add a label named exactly:  particle
+  3. Upload original_image.png as the task data.
+  4. Open the task, go to Actions > Upload annotations.
+  5. Choose format "COCO 1.0" and select annotations.coco.json.
+
+Label Studio
+============
+  1. Create a project with an Image classification/segmentation template.
+  2. In Settings > Labeling Interface, add a PolygonLabels tag with value="particle".
+  3. Import > Upload files, select annotations.coco.json.
