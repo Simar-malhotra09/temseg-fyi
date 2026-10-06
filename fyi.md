@@ -1,0 +1,358 @@
+## Example 1: Trivial, one-shot segmentation
+
+This is an example of an image which is 'easy' to segment out of the box with the deep learning models. This means that minor-no refinements are needed by the user.
+
+Some of the reasons for this include well defined, isolated particles which have a fairly high contrast against the background.
+
+### Workflow used:
+
+1. Upload image.
+2. Using default model, run segmentation.
+3. Export.
+
+---
+
+<table>
+  <tr>
+    <td align="center"><strong>Image loaded in workspace</strong></td>
+    <td align="center"><strong>Model segmentation</strong></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/oneshot_pre.webp" width="100%"></td>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/oneshot_post.webp" width="100%"></td>
+  </tr>
+</table>
+
+## Example 2: Non-Trivial, one-shot segmentation
+
+This is an example of an image which is 'harder' to segment out of the box with the deep learning models, but still prodcues great outputs. This means that minor-no refinements are needed by the user.
+
+Some of the reasons why this image is 'harder' is because it contains contaminated regions: less well trained models will often end up incorrectly classifying them as a particle. We will show an exmaple of how to handle that
+in a example 3 .
+
+### Workflow used:
+
+1. Upload image.
+2. Using default model, run segmentation.
+3. Export.
+
+---
+
+<table>
+  <tr>
+    <td align="center"><strong>Image loaded in workspace</strong></td>
+    <td align="center"><strong>Model segmentation</strong></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/oneshot_pre_1.webp" width="100%"></td>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/oneshot_post_1.webp" width="100%"></td>
+  </tr>
+</table>
+
+## Example 3: Handling false positive segmentation
+
+This is an example of an image which contains some false positives: the model incorrectly segments part of the conataminated region as particles. This means that minor-medium refinements are needed by the user.
+
+To note, the true positive segmentations (the particles which have been correctly identified) are actually quite good: their masks themselves don't need fixing, thus the refinement in this case will mostly be in form of deletions of false positives.
+
+### Workflow used:
+
+1. Upload image.
+2. Using default model, run segmentation.
+3. Visually identify false positives.
+4. Enter Refine mode via the left sidebar.
+5. Click on a false positive particle (It's boundries get highlighted)
+6. Click backspace to delete. (It should disappear from the canvas)
+7. Repeat as many times as needed.
+
+Note 1: This refined state, and the particle stats **only** get updated if you click on "Save refinements". Failure to do so will discard all changes.
+
+Note 2: We realize that this loop of 'Select one, delete one' can be really annoying in the case of many false positives. We are actively working on better solution like batch-deletion.
+
+---
+
+<table>
+  <tr>
+    <td align="center"><strong>Image loaded in workspace</strong></td>
+
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/ref-del-pre.webp" width="100%"></td>
+
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td align="center"><strong>Model segmentation: False positives are clear </strong></td>    
+    <td align="center"><strong>Refined Model segmentation: False positives are deleted </strong></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://github.com/Simar-malhotra09/temseg-fyi/blob/main/imgs_for_nb_compressed/ref_del_seg_post.webp?raw=true" width="100%"></td>    
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/ref_del_post.webp" width="100%"></td>
+  </tr>
+</table>
+
+## Example 4: Handling malfromed/missed particles
+
+This is an example of an image where the model fails to detect/segment some particles. This means that medium-high refinements are needed by the user.
+
+Why does the model miss particels?
+There are many reasons:
+
+- The image might be fairly out-of-distribution of the model's training data.
+- The image may have a low contrast
+
+Both of this apply in our case.
+
+With just a model and this input image, a user if constrained as to what they can do now: They either have to segment image manually, accept the output, or go train their own (hopefully) better model.
+
+With temseg, you can work from this current state, instead of being forces to start from scratch!
+
+We will show multiple approaches in order to highlight them, but it's usually a good idea to stick to a single approach until it's progress stagnates.
+
+---
+
+<table>
+  <tr>
+    <td align="center"><strong> Image loaded in workspace. </strong></td>    
+    <td align="center"><strong> Model segmentation: Missed/malformed segmentation. </strong></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/box_pre.webp" width="100%"></td>   
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/box_seg_post.webp" width="100%"></td>
+  </tr>
+</table>
+
+## 4.1: Manually fixing an existing, malformed, segmentation
+
+This approach is best for when the model detects and segments particles, but has defects such as segmenting what is a single particle, as two, as is shown in the example.
+
+### Workflow used:
+
+1. Upload image.
+2. Using default model, run segmentation.
+3. Visually identify bad existing segmentation.
+4. Enter Refine mode via the left sidebar.
+5. Click on the smaller particle (It's boundries get highlighted)
+6. Click backspace to delete. (It should disappear from the canvas)
+7. Click on the larger particle to select
+8. Click on vertex to select it, and drag into desiered position.
+9. Right click on vertex to delete in case needed.
+10. Repeat as needed.
+
+The same rules about saving refinements hold from Example 3
+<table>
+  <tr>
+    <td align="center"><strong> Bad segmentation: This should be a single particle </strong></td>    
+    <td align="center"><strong>Manual: Delete smaller particle and fix polygon for the larger to cover the whole particle</strong></td>
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/box_ref_man_int.webp" width="100%"></td>   
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/box_ref_man.webp" width="100%"></td>
+  </tr>
+</table>
+
+---
+
+## 4.2: Manually fixing a missed particle
+
+This is one approach of dealing with the case where the model completely misses a particle. This works best where you've identified a segmented particle that is of a similar shape and size as the missed particle. This let's you copy-paste the segmentation mask of the segmented particle for the missed particle. Some fixing of the polygon mask to ensure it lines up and fit's the missed particle is normal.
+
+### Workflow used:
+
+1. Upload image.
+2. Using default model, run segmentation.
+3. Visually identify bad existing segmentation.
+4. Enter Refine mode via the left sidebar.
+5. Identify the missed particle and — out of the segmented particles —it's most similar looking match, if exists.
+6. Click on the match (segmented masks)
+7. The left sidebar will show a Copy button. Click it. Alternatively you can just press ctrl-c.
+8. Your cursor will be replaced by a floating boundry of the copied particle. Bring it over to the missed particle.
+9. Click to place it.
+10. Now you may have to refine it further:
+    10.1. Use the floating ball to control the orientation of the mask (Highlighted in sub figure 3 below)
+    10.2. Manipulate the vertex as shown in approach 1.1 to the precision you need.
+
+The same rules about saving refinements hold from Example 3
+
+<table>
+  <tr>
+    <td align="center"><strong> 1. Missed particel: Find it's similar match and copy. </strong></td>    
+  </tr>
+  <tr>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/box_ref_copy_pre.webp" width="100%"></td>
+  </tr>
+</table>
+
+<table>
+  <tr> 
+    <td align="center"><strong> 2. Bring the overlay of the copied particles boundry over to the missed particle.</strong></td>
+    <td align="center"><strong> 3. Place over missed particle: Use floating ball to control orientation and fix vertices of polygon if needed. </strong></td>   
+  </tr>
+  <tr> 
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/box_ref_copy_int.webp" width="100%"></td>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/box_ref_copy_show_rot.webp" width="100%"></td>   
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td align="center"><strong> 4. Final result. </strong></td>
+  </tr>
+  <tr> 
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/box_ref_copy_post.webp" width="100%"></td>
+  </tr>
+</table>
+
+---
+
+## 4.3: SAM Prompting
+
+To understand this tool, let's take a step back.
+
+All of the models in the platform follow a 2 stage Detector-Segmenter pipeline.
+
+This means that first a detection model return bounding boxes (regions of the image which are likely to contain a particle), which are then passed onto the segmentation model which classifies all the pixel in them as belonging to the foreground (a particle) or the background.
+
+A critical downfall of this approach is that the segmentation model only sees the parts of the images which the detector model proposes are a bounding box: if the detector model fails to correctly/accurately detect a particle, the segmentor model cannot account for it's failure. In short, the errors of each of the model accumulate.
+
+But is this the cause of failure for our example? Yes! You can verify this by clicking the 'Show boxes' button in the canvas workspace, which overlays the bounding boxes the detector model produced. It's clear that Yolo never detected these particles in the first place! What to do now?
+
+Fortunately, SAM supports a prompting based mechanism, wherein the user-input can be used as a substitution for a formal bounding box.
+This means, for cases such as this one, we can manually provide SAM with guidence as to where the particles are.
+
+We support two ways users in Temseg can provide this input, and they are described below.
+<table>
+  <tr>
+    <td align="center"><strong> Show which particles the detector model identifies:</strong></td>
+  </tr>
+  <tr> 
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/show_bbox_overlay.webp" width="100%"></td>
+  </tr>
+</table>
+
+For all of these, you need to be on the 'Augment' Tab, which is accessible from the left sidebar.
+
+It's important to understand that the following methods (and many others), work within a **'Proposals'** workflow: Excluding the inital segmentation a model results, any sort of augmentation result (whether that's SAM prompting, Random Forest (described below), or Manual annotation (also described below)) is first returned as a 'proposal', which you need the explicitly 'accept'.
+
+The idea behind this apparent friction is the following:
+
+There's essentially 2 ways an augmentation result is returned: either one result at a time (in case of manual annotation) or many results at a time (in case of Random Forest).
+
+Now consider a case where the returned result is partially useful: some particle are segmented well while others aren't. In the case of single result return (eg: manual annotation), the solution to fixing it is trivial: you discard current mask, and draw it again.
+
+But in the case of multi result return-- if it were implemented the same way-- you'd be forced to either accept all results or discard all. This is far from ideal because almost always these techquies will mis-segment some particles while well segmenting others.
+
+The proposal mechanism let's you choose which you want to keep and which you want to discard, further reinforcing the belief of the platform that no single technique is the panacea and an intergrative approach should be the goal.
+
+To discard a proposal, simply click on the particle in the canvas.
+To accept all the remaning proposals, click the 'Accept Proposals' button on the left sidebar.
+
+### 4.3.1: Click to point
+
+Once in the 'Augment' Tab, choose 'Point'.  
+This simplest way to give user hints about the location of a particle. This method involves clicking the regions in the image where you've visually identified a particle. The constraint is that it must not have been already segmented. If that is the case (eg: the model intially segmented the particle) but you wish to use this specific approach for a a partcle, consider using the 'Refine mode' to delete the particle segmentation mask first.
+
+Once you click a point, SAM return a 3 masks around the point, at 3 different scales. Internally, if no priors exists (that is, no segmentation masks exists, not just for this particle, but any in the whole image), we have found that keeping the smallest of those marks tends to work the best, generally speaking.
+
+If priors exists thought (eg: the image has 2 particles, 1 has been segmented already, for some reason the latter hasn't and you wish to use this tool on it), we use the assumption that nanoparticles are fairly homogeneously distributed within an image, and we do that to inform which of the 3 mask to return.
+
+Internally, we build expected sizes from the square roots of prior areas, take the 25th, 50th, and 75th percentiles, and scales them to three box widths.
+We then run SAM three times per click, and keep the candidate whose area is closest in log space to the median prior area. The point of this is that click results track the size of the particles you already annotated/segmented, instead of SAM's arbitrary choice of scale.
+
+As you can see, both of these have their drawbacks:
+In the case where no particles exists, there is no garuntee that the smallest particle will be the right mask (it admittedly is fairly arbitrary and based on empirical experiments for now).
+In the case of prior masks, this rests on the assumption of particles being homogeneously distributed in terms of size and shape, which is not neccesarily true ofcourse.
+
+The root cause of these drawbacks is the fact that via 'Click to Prompt', we only tell SAM about the location of the particle it need's to segment (ideally placing the point at the center), but we tell it nothing about the scale!
+If you step back and see why the 2 step (Detector-Segmenter) approach works so well, it's because the boundig boxes give information about the location (where in the image), and scale ((ideally), the smallest possible rectangle that encloses the particle pixels fully.)
+
+The following alternative tries to remedy these downsides.
+
+### 4.3.2: Click to box
+
+Once in the 'Augment' Tab, choose 'Box'.
+
+To emulate the behavior of a bounding box (and all it's benefits described above), this tool allows you to essentially draw a bounding box yourself.
+
+To do say, simply just drag a tight rectangle around one particle. As soon as mouse up, the platform will return a proposal which you can choose to discard, accept, or levae pending while you box more paritcles.
+
+Internally,
+The server normalizes the drag direction, clamps to
+the image, and rejects boxes under 4 pixels. It then prompts SAM with the box and the box
+center point together . Here no sweep or scale picking is
+needed, because the box defines the scale itself. In our testing, we found SAM is dramatically more reliable with box prompts than point prompts on small,
+clumped, or out of distribution particles, and box plus point is SAM's strongest prompt,
+since the box constrains scale and the point says which particle when the box grazes a
+neighbor.
+
+After SAM answers, both flows share one tail: mask ANDed against the not-yet-segmented area,
+area checked against the window, largest contour found and simplified at 1 percent of its
+perimeter, then an instance record with id, contour, bbox, area, and the SAM score. Anything
+that fails lands in a rejected list with a reason, like "already segmented" or "area below
+min", which the UI surfaces.
+
+<table>
+  <tr>
+    <td align="center"><strong>1. Navigate to 'Box' tool in 'Augment' tab. </strong></td>
+
+  </tr>
+  <tr> 
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/box_ref_box_pre.webp" width="100%"></td>
+  </tr>
+</table>
+
+<table>
+  <tr> 
+    <td align="center"><strong> 2. Draw a box encompassing the whole particle.</strong></td>
+    <td align="center"><strong> 3. Verify proposal: Accept or Reject (It can be further refined if needed, via Refine mode) </strong></td>   
+  </tr>
+  <tr> 
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/box_ref_box_int.webp" width="100%"></td>
+    <td width="50%"><img src="https://raw.githubusercontent.com/Simar-malhotra09/temseg-fyi/main/imgs_for_nb_compressed/box_ref_box_post.webp" width="100%"></td>   
+  </tr>
+</table>
+
+## 4.4 Random Forests
+
+Once in the 'Augment' Tab, go to 'RF Recovery'.
+
+If you've used tools such as FIJI and it's popular plugins such as LabKit, this approach should be familiar to you.
+
+In simple terms, all the rf classifier asks from you are to group labels in 2 (or more) categories: background and foreground. It then looks at the features of the pixels labelled and tries to find patterns (eg: the background labelled pixels are consistenly darker than the foreground one). Once it's trained on these labels, running it over the image labels all the pixels. This is called semantic segmentation.
+
+There two downsides to this that we try to mitigate:
+
+1. **User input is needed twice**
+
+   One for the foreground, and once for the background. In the case where no priors exist (no existing masks), there really is not working around this. But as you use the platform, you are likely find youself in situations where the model produces partial results, maybe use you SAM prompting to futher segment more particles but at some point these techniques stagnate, or maybe you image contains a couple hundred particles where giving input for each isn't feasible. Random forests are a great candidate here. But instead of forcing you to label picks twice (foreground and background), this tool only asks you to label the background pixels and automaticlly uses the pixel from priors as the foreground label. This saves quite a bit of time and effort, especially because labelling the background is usually far easier anyways.
+
+   To label the background, click 'Mark RF Background'. A brush will appear on the canvas, and you can use it to mark the background region of the image. The brush size can be tuned by either the slider in the sidebar, or moving the mouse wheel up or down. We do ask that you label a fair amount of pixel for a decent output; the current min requirement is about 4% of the total pixel count. Generally speaking, the more the better.
+
+2. **Random forest segments semantically**
+
+   As noted before, one of the assumptions of the platform is that we ultimately care about quantitative stats
+   -- both global and on a per particle basis -- and that requires instance level masks. 
+   Popular tools such as FIJI's Labkit, require users to do a post processing operation to convert the pixel 
+   labels into instance labels. This is primarily done via techniques such as watershed, connected components, 
+   etc. 
+   The downside here is that this process is lossy: for spatially close, overlapping, or clusters of particles
+   these techniques often aren't satisfiable, and do not allow for any further human input. 
+   
+   A big difference with it's implementation in the platform is that we can use the model outputs to inform 
+   the identity attribution once we have the pixel level labels. This is done as the following: 
+   
+   First, it's important to note that RF labels the whole image. This means that any priors (segmentation masks, 
+   that existed before RF was ran), also get labelled. To account for this, we dedupe: only keep pixels which 
+   were labelled by RF that were not already part of a prior. 
+  
+   Then, each region of of these residual pixels becomes a candidate instance  A candidate
+  is checked against the existing instances (IoU on the rasterized contour) and dropped when it merely
+re-describes a particle we already have. This often materializes in the case when the forest fires on a halo
+around the boundries of a segmented particle. Surviving candidates are shown to the user as proposal, 
+wherein they can choose to keep or discard them individually as needed. 
+
+
+
+
